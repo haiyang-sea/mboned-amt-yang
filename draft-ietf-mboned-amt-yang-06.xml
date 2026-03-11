@@ -143,13 +143,13 @@ xmlns:xi="http://www.w3.org/2001/XInclude">
   <t>
   The following AMT terms are used in this document:
   <list style="symbols">
-    <t>Gateway: A network device or function that acts as an endpoint
+    <t>Gateway: A functional entity that acts as an endpoint
        for AMT tunnels on the receiver's domain. Its primary role is to
        discover AMT Relays, establish AMT tunnels to them, receive multicast
        traffic over these tunnels, and then forward that traffic natively
        within its local domain.</t>
 
-    <t>Relay: A network device or function located in the source's domain
+    <t>Relay: A functional entity located in the source's domain
        or a multicast-enabled part of the Internet. Its primary role is to
        listen for requests from AMT Gateways, replicate multicast traffic
        from native multicast routing domains, and encapsulate/forward this
@@ -177,7 +177,7 @@ xmlns:xi="http://www.w3.org/2001/XInclude">
        networks to unicast networks.</t>
 
     <t>Secret Key Timeout: The maximum recommended validity period or rotation interval
-       for the private secret (or key) used by a AMT Relay to compute Response MAC values,
+       for the private secret (or key) used by a AMT Relay to compute Response Message Authentication Code (MAC) values,
        according to Section 5.3.6 of <xref target="RFC7450"/>.</t>
   </list>
   </t>
@@ -194,7 +194,7 @@ xmlns:xi="http://www.w3.org/2001/XInclude">
 <t>
   The AMT protocol mainly includes two components illustrated in Figure 1.
   The two components are Relay and Gateway entities, each with their internal
-  modules (Discovery, Tunnel Management, Multicast Forwarding).
+  modules (Discovery, Tunnel Management, and Multicast Forwarding).
 </t>
 <figure anchor="figure 1" align="center">
 <name>AMT Protocol Components</name>
@@ -324,14 +324,14 @@ module: ietf-amt
     <t>
       The 'amt' container encapsulates all AMT functionality and serves as the
       primary entry point for its configuration and state. The 'amt' container
-      consists of two functional components: the relay and the gateway.
+      consists of two functional components: the relay and the gateway. Support of relay or gateway is indicated by dedicated YANG features.
     </t>
     <t>
       The 'relay' container manages the AMT Relay function on the multicast source side.
       It provides the configuration and operational state for AMT Relay devices that
       receive multicast traffic, tunnel it to AMT Gateways over unicast, and act as tunnel
       termination points. This container is conditionally present only if the device
-      implements the amt-relay feature, typically on service provider edge routers or
+      implements the 'amt-relay' feature, typically on service provider edge routers or
       data center gateways.
     </t>
     <t>
@@ -339,7 +339,7 @@ module: ietf-amt
       It provides the configuration and operational state for AMT Gateway devices that
       discover AMT Relays, establish tunnels to receive multicast traffic, and forward it
       to local receivers. This container is conditionally present only if the device implements
-      the amt-gateway feature, typically on enterprise edge routers or customer premises equipment (CPE).
+      the 'amt-gateway' feature, typically on enterprise edge routers or Customer Premises Equipment (CPE).
     </t>
   </section>
   <section anchor="relay" title="Relay">
@@ -430,8 +430,8 @@ module: ietf-amt
     <t>
       'addresses': Indicates the core address configurations for AMT Relay.
       This data node includes 'family', 'anycast-prefix', and 'local-address'.
-      The 'family' indicates the address family (IPv4 or IPv6); The 'anycast-prefix'
-      indicates the address prefix used by the Gateway to discover the Relay;
+      The 'family' indicates the address family (IPv4 or IPv6). The 'anycast-prefix'
+      indicates the address prefix used by the Gateway to discover the Relay.
       The 'local-address' indicates the local interface address the Relay actually
       listens on and sends AMT messages on, or the actual communication address
       after the tunnel is established.
@@ -459,9 +459,9 @@ module: ietf-amt
     </t>
     <t>
       'tunnels': Indicates tunnel information from various AMT gateways connected to
-      this AMT relay. Each tunnel entry ('tunnel') includes the address and port of
-      the tunnel opposite end (gateway) ('gateway-address' and 'gateway-port'),
-      the local IP address and UDP port used by the local (relay) end for this tunnel
+      this AMT relay. Each tunnel entry ('tunnel') includes the IP address and port number of
+      the tunnel opposite end ('gateway') ('gateway-address' and 'gateway-port'),
+      the local IP address and UDP port number used by the local ('relay') end for this tunnel
       ('local-address' and 'local-port'), the tunnel status ('state'), the multicast flow
       information ('multicast-flows') carried by the tunnel, the number of different
       multicast groups currently carried by this tunnel ('multicast-group-num'),
@@ -474,28 +474,7 @@ module: ietf-amt
     </t>
     <t>
       'relay-message-statistics': Indicates various messages and error statistics
-      handled by AMT relay. It includes received message statistics ('received'),
-      sent message statistics ('sent'), error statistics ('error'), and the time
-      on the most recent occasion at which any one or more of the tunnel's
-      message counters suffered a discontinuity ('discontinuity-time'). The received
-      message statistics include the number of received relay discovery messages ('relay-discovery'),
-      the number of received request messages ('request'), the number of received
-      membership update messages ('membership-update'), and the number of received
-      teardown messages ('teardown'). The sent message statistics include the number of relay
-      advertisement messages sent ('relay-advertisement') and the number of relay membership
-      query messages sent ('membership-query'). The error statistics include the number
-      of incomplete data packets ('incomplete-packet'), the number of invalid MAC addresses
-      ('invalid-mac'), the number of unexpected message types ('unexpected-type'), the number of
-      invalid relay discovery addresses ('invalid-relay-discovery-address'), the number of invalid
-      membership request addresses ('invalid-membership-request-address'), the number of invalid
-      membership update addresses ('invalid-membership-update-address'), the number of
-      incomplete relay discovery messages ('incomplete-relay-discovery-messages'), the number of
-      incomplete membership request messages ('incomplete-membership-request-messages'), the
-      number of incomplete membership update messages ('incomplete-membership-update-messages'),
-      the number of AMT membership update messages received for non-existent tunnels
-      ('no-active-gateway'), the number of AMT membership update messages received with an invalid
-      IP checksum ('invalid-inner-header-checksum'), and the current number of timed-out gateways
-      because of inactivity ('gateways-timed-out').
+      handled by AMT relay.
     </t>
   </section>
   <section anchor="gateway" title="Gateway">
@@ -554,26 +533,6 @@ module: ietf-amt
     <t>
       'pseudo-interfaces': Indicates the configuration and operational state of pseudo
       interfaces used to establish AMT tunnels between gateways and relays.
-      Each pseudo interface entry includes the pseudo interface used ('interface'),
-      the method used to discover the relay address ('discovery-method'), the IP address
-      of the AMT relay discovery address ('relay-discovery-address'), the unicast IP address of
-      the AMT relay address ('relay-address'), the interface to use when communicating
-      with a relay ('upstream-interface'), the initial time to wait for a response to
-      a Relay Discovery message ('discovery-timeout'), the maximum number of Relay Discovery
-      retransmissions to allow before terminating relay discovery and reporting an error
-      ('discovery-retrans-count'), the initial time to wait for a response to a Request message
-      ('request-timeout'), the maximum number of Request retransmissions to allow before
-      abandoning a relay and restarting relay discovery or reporting an error ('request-retrans-count'),
-      the maximum number of times a gateway should attempt to send the same Request or Membership
-      Update message after receiving an ICMP Destination Unreachable message ('dest-unreach-retry-count'),
-      the UDP port of AMT relay ('relay-port'), the local IP address of this AMT tunnel ('local-address'),
-      the local UDP port of this AMT tunnel ('local-port'), the state of this AMT tunnel ('tunnel-state'),
-      the number of AMT relay discovery messages sent on the interface ('relay-discovery-message-count'),
-      the number of AMT relay advertisement messages received on the interface
-      ('relay-advertisement-message-count'), the number of AMT membership request messages sent
-      on the interface ('request-message-count'), the number of AMT membership query messages received
-      on the interface ('membership-query-message-count'), and the number of AMT membership update messages
-      sent on the interface ('membership-update-message-count').
     </t>
     <t>
       'gateway-message-statistics': Indicates the message statistics of the AMT gateway. It has
@@ -1781,3 +1740,4 @@ module: ietf-amt
   </section>
   </back>
 </rfc>
+
