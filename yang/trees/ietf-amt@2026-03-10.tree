@@ -83,8 +83,8 @@ module: ietf-amt
        |     +--ro discontinuity-time?   yang:date-and-time
        +--rw gateway {amt-gateway}?
           +--rw pseudo-interfaces
-          |  +--rw interface* [interface]
-          |     +--rw interface
+          |  +--rw interface* [name]
+          |     +--rw name
           |     |       if:interface-ref
           |     +--rw discovery-method?
           |     |       identityref
@@ -118,6 +118,7 @@ module: ietf-amt
           |     +--ro membership-update-message-count?
           |             yang:zero-based-counter64
           +--ro gateway-message-statistics
+             +--ro discontinuity-time?   yang:date-and-time
              +--ro received
              |  +--ro relay-advertisement?
              |  |       yang:zero-based-counter64
