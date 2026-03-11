@@ -1,0 +1,130 @@
+module: ietf-amt
+
+  augment /rt:routing/rt:control-plane-protocols:
+    +--rw amt
+       +--rw relay {amt-relay}?
+       |  +--rw addresses
+       |  |  +--rw address* [family]
+       |  |     +--rw family            identityref
+       |  |     +--rw anycast-prefix?   inet:ip-prefix
+       |  |     +--rw local-address?    inet:ip-address
+       |  +--rw tunnel-limit?                 uint32
+       |  +--rw secret-key-timeout?           uint32
+       |  +--rw relay-dns-resource-records
+       |  |  +--rw record* [source-address]
+       |  |     +--rw source-address       inet:ip-address
+       |  |     +--rw precedence?          uint32
+       |  |     +--rw d-bit?               boolean
+       |  |     +--rw relay-type?          enumeration
+       |  |     +--rw discovery-address?   inet:ip-address
+       |  |     +--rw domain-name?         inet:domain-name
+       |  +--ro tunnels
+       |  |  +--ro tunnel* [gateway-address gateway-port]
+       |  |     +--ro gateway-address
+       |  |     |       inet:ip-address
+       |  |     +--ro gateway-port
+       |  |     |       inet:port-number
+       |  |     +--ro local-address?
+       |  |     |       inet:ip-address
+       |  |     +--ro local-port?
+       |  |     |       inet:port-number
+       |  |     +--ro state?                             identityref
+       |  |     +--ro multicast-flows
+       |  |     |  +--ro flow* [source-address group-address]
+       |  |     |     +--ro source-address
+       |  |     |     |       ip-multicast-source-address
+       |  |     |     +--ro group-address
+       |  |     |             rt-types:ip-multicast-group-address
+       |  |     +--ro multicast-group-num?               yang:gauge32
+       |  |     +--ro request-message-count?
+       |  |     |       yang:zero-based-counter64
+       |  |     +--ro membership-query-message-count?
+       |  |     |       yang:zero-based-counter64
+       |  |     +--ro membership-update-message-count?
+       |  |     |       yang:zero-based-counter64
+       |  |     +--ro discontinuity-time?
+       |  |             yang:date-and-time
+       |  +--ro relay-message-statistics
+       |     +--ro received
+       |     |  +--ro relay-discovery?     yang:zero-based-counter64
+       |     |  +--ro request?             yang:zero-based-counter64
+       |     |  +--ro membership-update?   yang:zero-based-counter64
+       |     |  +--ro teardown?            yang:zero-based-counter64
+       |     +--ro sent
+       |     |  +--ro relay-advertisement?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro membership-query?
+       |     |          yang:zero-based-counter64
+       |     +--ro error
+       |     |  +--ro incomplete-packet?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro invalid-mac?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro unexpected-type?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro invalid-relay-discovery-address?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro invalid-membership-request-address?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro invalid-membership-update-address?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro incomplete-relay-discovery-messages?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro incomplete-membership-request-messages?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro incomplete-membership-update-messages?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro no-active-gateway?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro invalid-inner-header-checksum?
+       |     |  |       yang:zero-based-counter64
+       |     |  +--ro gateways-timed-out?
+       |     |          yang:gauge64
+       |     +--ro discontinuity-time?   yang:date-and-time
+       +--rw gateway {amt-gateway}?
+          +--rw pseudo-interfaces
+          |  +--rw interface* [interface]
+          |     +--rw interface
+          |     |       if:interface-ref
+          |     +--rw discovery-method?
+          |     |       identityref
+          |     +--rw relay-discovery-address?
+          |     |       inet:ip-address
+          |     +--rw relay-address?
+          |     |       inet:ip-address
+          |     +--rw upstream-interface?
+          |     |       if:interface-ref
+          |     +--rw discovery-timeout?                   uint32
+          |     +--rw discovery-retrans-count?             uint32
+          |     +--rw request-timeout?                     uint32
+          |     +--rw request-retrans-count?               uint32
+          |     +--rw dest-unreach-retry-count?            uint32
+          |     +--rw relay-port?
+          |     |       inet:port-number
+          |     +--ro local-address?
+          |     |       inet:ip-address
+          |     +--ro local-port?
+          |     |       inet:port-number
+          |     +--ro tunnel-state?
+          |     |       identityref
+          |     +--ro relay-discovery-message-count?
+          |     |       yang:zero-based-counter64
+          |     +--ro relay-advertisement-message-count?
+          |     |       yang:zero-based-counter64
+          |     +--ro request-message-count?
+          |     |       yang:zero-based-counter64
+          |     +--ro membership-query-message-count?
+          |     |       yang:zero-based-counter64
+          |     +--ro membership-update-message-count?
+          |             yang:zero-based-counter64
+          +--ro gateway-message-statistics
+             +--ro received
+             |  +--ro relay-advertisement?
+             |  |       yang:zero-based-counter64
+             |  +--ro membership-query?
+             |          yang:zero-based-counter64
+             +--ro sent
+                +--ro relay-discovery?     yang:zero-based-counter64
+                +--ro request?             yang:zero-based-counter64
+                +--ro membership-update?   yang:zero-based-counter64
+                +--ro teardown?            yang:zero-based-counter64
