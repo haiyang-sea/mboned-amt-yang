@@ -1367,15 +1367,15 @@ module ietf-amt {
 
 <section anchor="Security Considerations" title="Security Considerations">
 <t>
-  This section is modeled after the template described in Section 3.7
+  This section is modeled after the template described in Section 3.7.1
   of <xref target="I-D.ietf-netmod-rfc8407bis"/>.
 </t>
 <t>
   The "ietf-amt" YANG module defines a data model that is designed to
-  be accessed via YANG-based management protocols, such as NETCONF
+  be accessed via YANG-based management protocols, such as Network Configuration Protocol (NETCONF)
   <xref target="RFC6241"/> and RESTCONF <xref target="RFC8040"/>.
   These YANG-based management protocols (1) have to use a
-  secure transport layer (e.g., SSH <xref target="RFC4252"/>,
+  secure transport layer (e.g., Secure Shell (SSH) <xref target="RFC4252"/>,
   TLS <xref target="RFC8446"/>, and QUIC
   <xref target="RFC9000"/>) and (2) have to use mutual authentication.
 </t>
@@ -1530,22 +1530,6 @@ module ietf-amt {
           <seriesInfo name="RFC" value="9911"/>
           <seriesInfo name="DOI" value="10.17487/RFC9911"/>
         </reference>
-        <reference anchor="I-D.ietf-netmod-rfc8407bis">
-          <front>
-            <title>Guidelines for Authors and Reviewers of Documents Containing YANG Data Models</title>
-            <author fullname="Andy Bierman" initials="A." surname="Bierman">
-              <organization>YumaWorks</organization>
-            </author>
-            <author fullname="Mohamed Boucadair" initials="M." surname="Boucadair">
-              <organization>Orange</organization>
-            </author>
-            <author fullname="Qin Wu" initials="Q." surname="Wu">
-              <organization>Huawei</organization>
-            </author>
-            <date day="5" month="June" year="2025"/>
-          </front>
-          <seriesInfo name="Internet-Draft" value="draft-ietf-netmod-rfc8407bis-28"/>
-        </reference>
     </references>
     <references title="Informative References">
         <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4252.xml"/>
@@ -1577,6 +1561,22 @@ module ietf-amt {
           </front>
           <refcontent>World Wide Web Consortium Recommendation REC-xml-20081126</refcontent>
         </reference>
+        <reference anchor="I-D.ietf-netmod-rfc8407bis">
+          <front>
+            <title>Guidelines for Authors and Reviewers of Documents Containing YANG Data Models</title>
+            <author fullname="Andy Bierman" initials="A." surname="Bierman">
+              <organization>YumaWorks</organization>
+            </author>
+            <author fullname="Mohamed Boucadair" initials="M." surname="Boucadair">
+              <organization>Orange</organization>
+            </author>
+            <author fullname="Qin Wu" initials="Q." surname="Wu">
+              <organization>Huawei</organization>
+            </author>
+            <date day="5" month="June" year="2025"/>
+          </front>
+          <seriesInfo name="Internet-Draft" value="draft-ietf-netmod-rfc8407bis-28"/>
+        </reference>		
     </references>
   </references>
   <section anchor="AMT-Tree" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a">
@@ -1746,13 +1746,9 @@ module: ietf-amt
   <name>Data Model Example in JSON</name>
   <artwork align="left" name="" type="" alt=""><![CDATA[
 {
-  "config": {
-    "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
-    "routing": {
-      "@xmlns": "urn:ietf:params:xml:ns:yang:ietf-routing",
+    "ietf-routing:routing": {
       "control-plane-protocols": {
-        "amt": {
-          "@xmlns": "urn:ietf:params:xml:ns:yang:ietf-amt",
+        "ietf-amt:amt": {
           "relay": {
             "addresses": {
               "address": [
@@ -1775,9 +1771,9 @@ module: ietf-amt
       }
     }
   }
-}
   ]]></artwork>
   </figure>
   </section>
   </back>
 </rfc>
+
