@@ -1,13 +1,13 @@
 <!-- regenerate: on (set to off if you edit this file) -->
 
-# TODO - Your title
+# A YANG Data Model for Automatic Multicast Tunneling (AMT)
 
-This is the working area for the individual Internet-Draft, "TODO - Your title".
+This is the working area for the MBONED WG Internet-Draft, "A YANG Data Model for Automatic Multicast Tunneling (AMT)".
 
-* [Editor's Copy](https://changwang-ietf.github.io/mboned-amt-yang/#go.draft-todo-yourname-protocol.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-todo-yourname-protocol)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-todo-yourname-protocol)
-* [Compare Editor's Copy to Individual Draft](https://changwang-ietf.github.io/mboned-amt-yang/#go.draft-todo-yourname-protocol.diff)
+* [Editor's Copy](https://changwang-ietf.github.io/mboned-amt-yang/#go.draft-ietf-mboned-amt-yang.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-mboned-amt-yang)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-ietf-mboned-amt-yang)
+* [Compare Editor's Copy to Individual Draft](https://changwang-ietf.github.io/mboned-amt-yang/#go.draft-ietf-mboned-amt-yang.diff)
 
 
 ## Contributing
