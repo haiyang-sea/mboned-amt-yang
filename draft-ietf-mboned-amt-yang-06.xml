@@ -115,6 +115,11 @@ xmlns:xi="http://www.w3.org/2001/XInclude">
 <t>
   This document defines a YANG data model for managing AMT protocol.
 </t>
+<t>
+  RFC Ed.: Please replace all occurrences of 'XXXX' with the
+  actual RFC number (and remove this note). Also, please update
+  the revision date to match the publication date.
+</t>	
 </section>
 <section anchor="Terminology-Conventions" title="Terminology &amp; Notation Conventions">
 <section anchor="Conventions" title="Conventions Used in This Document">
@@ -1415,10 +1420,6 @@ module ietf-amt {
 </section>
 
 <section anchor="IANA Considerations" title="IANA Considerations">
-<t>
-  RFC Ed.: Please replace all occurrences of 'XXXX' with the
-  actual RFC number (and remove this note).
-</t>
   <section anchor="IETF XML Registry" title="IETF XML Registry">
   <t>
     IANA is requested to register the following URI in the "ns"
@@ -1740,4 +1741,5 @@ module: ietf-amt
   </section>
   </back>
 </rfc>
+
 
