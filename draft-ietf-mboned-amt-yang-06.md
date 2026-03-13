@@ -713,9 +713,9 @@ module ietf-amt {
               "Each entry contains parameters for an AMT relay
                address identified by the 'family' key. Under
                normal operation, these addresses SHOULD belong
-               to the same address family indicated by the 'family'.
+               to the same address family indicated by 'family'.
                Any mismatch is an indication of abnormal
-               configurations and is therefore allowed to be
+               configuration and is therefore allowed to be
                reported.
                
                The 'anycast-prefix' serve as the discovery entry
@@ -743,7 +743,7 @@ module ietf-amt {
                  If 'family' is IPv6, it SHOULD be an IPv6 prefix.
                  
                  Any mismatch is an indication of abnormal
-                 configurations and is therefore allowed to be
+                 configuration and is therefore allowed to be
                  reported.";
             }
             leaf local-address {
@@ -757,7 +757,7 @@ module ietf-amt {
                  If 'family' is IPv6, it SHOULD be an IPv6 address.
                  
                  Any mismatch is an indication of abnormal
-                 configurations and is therefore allowed to be
+                 configuration and is therefore allowed to be
                  reported.";
             }
           }
@@ -847,10 +847,10 @@ module ietf-amt {
                 "Indicates the type of relay in the AMT relay RR.
                  
                  Value 0 indicates that no AMT relay should be
-                 used for multicast traffic from this source;
+                 used for multicast traffic from this source.
                  
-                 Value 1 and 2 indicates that the IP address is
-                 used to describe the AMT relay;
+                 Values 1 and 2 indicate that the IP address is
+                 used to describe the AMT relay.
                  
                  Value 3 indicates that the domain name is
                  used to describe the AMT relay.";
@@ -1160,7 +1160,7 @@ module ietf-amt {
             leaf relay-port {
               type inet:port-number;
               description
-                "The UDP port number of AMT relay.";
+                "The UDP port number of the AMT relay.";
             }
             leaf local-address {
               type inet:ip-address;
