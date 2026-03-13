@@ -53,7 +53,7 @@ module ietf-amt {
                <mailto:vinkumar@juniper.net>";
 
   description
-    "This module describes a YANG data model for managing the 
+    "This module describes a YANG data model for managing the
      Automatic Multicast Tunneling (AMT) protocol.
 
      The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
@@ -203,7 +203,15 @@ module ietf-amt {
                to the same address family indicated by 'family'.
                Any mismatch is an indication of abnormal
                configuration and is therefore allowed to be
-               reported.";
+               reported.
+
+               The 'anycast-prefix' serve as the discovery entry
+               for AMT relays, while unicast IP addresses
+               'local-address' are the actual communication entities
+               of AMT relays. The AMT gateway first locates the AMT
+               relay via the 'anycast-prefix' and then uses its
+               'local-address' to complete all subsequent AMT
+               interactions.";
             leaf family {
               type identityref {
                 base rt:address-family;
@@ -232,11 +240,12 @@ module ietf-amt {
                  which is obtained as a result of the discovery
                  process.
 
-                 If 'family' is IPv4, it SHOULD be an IPv4 prefix;
-                 If 'family' is IPv6, it SHOULD be an IPv6 prefix.
+                 If 'family' is IPv4, it SHOULD be an IPv4 address;
+                 If 'family' is IPv6, it SHOULD be an IPv6 address.
 
                  Any mismatch is an indication of abnormal
-                 configurations.";
+                 configuration and is therefore allowed to be
+                 reported.";
             }
           }
         }
@@ -478,13 +487,13 @@ module ietf-amt {
             leaf request {
               type yang:zero-based-counter64;
               description
-                "Number of AMT membership request messages
+                "Number of AMT membership Request messages
                  received.";
             }
             leaf membership-update {
               type yang:zero-based-counter64;
               description
-                "Number of AMT membership update messages
+                "Number of AMT membership Update messages
                  received.";
             }
             leaf teardown {
@@ -504,7 +513,7 @@ module ietf-amt {
             leaf membership-query {
               type yang:zero-based-counter64;
               description
-                "Number of AMT membership query messages sent.";
+                "Number of AMT membership Query messages sent.";
             }
           }
           container error {
@@ -744,8 +753,8 @@ module ietf-amt {
           leaf discontinuity-time {
             type yang:date-and-time;
             description
-              "The time on the most recent occasion at which
-               the AMT gateway counters suffered a discontinuity.
+              "The time on the most recent occasion at which the AMT
+               gateway message counters suffered a discontinuity.
 
                If no such discontinuities have occurred since the
                last re-initialization of the gateway, then this
@@ -797,6 +806,3 @@ module ietf-amt {
     } // amt
   } // augment
 }
-
-
-
