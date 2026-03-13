@@ -1644,7 +1644,7 @@ failure in Relay discovery, tunnel establishment, or traffic decapsulation.</t>
         <reference anchor="RFC9911" target="https://www.rfc-editor.org/info/rfc9911">
           <front>
             <title>Common YANG Data Types</title>
-            <author initials="J." surname="Schowalder" fullname="J眉rgen Schowalder" role="editor">
+            <author initials="J." surname="Schowalder" fullname="Jürgen Schowalder" role="editor">
               <organization/>
             </author>
             <date year="2025" month="December"/>
@@ -1763,7 +1763,7 @@ failure in Relay discovery, tunnel establishment, or traffic decapsulation.</t>
             <author initials="E." surname="Maler" fullname="Eve Maler">
               <organization/>
             </author>
-            <author initials="F." surname="Yergeau" fullname="Fran莽ois Yergeau">
+            <author initials="F." surname="Yergeau" fullname="François Yergeau">
               <organization/>
             </author>
             <date year="2008" month="November"/>
