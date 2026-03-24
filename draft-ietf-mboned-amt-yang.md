@@ -681,6 +681,10 @@ module: ietf-amt
    Reference:  RFC XXXX
 ~~~~
 
+# Acknowledgments
+
+Thanks to Mohamed Boucadair for review and comments.
+
 --- back
 
 # Full Tree {#full-tree}
