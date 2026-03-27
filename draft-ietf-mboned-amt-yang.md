@@ -190,7 +190,7 @@ informative:
    with their internal modules (Discovery, Tunnel Management, and Multicast
    Forwarding).
 
-~~~~ aasvg
+~~~~
          +------------------------------------------------+
          |            AMT Protocol Components             |
          +------------------------------------------------+
