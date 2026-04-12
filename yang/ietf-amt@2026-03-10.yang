@@ -256,6 +256,7 @@ module ietf-amt {
         }
         leaf secret-key-timeout {
           type uint32;
+          units "minute";
           description
             "The timeout interval of secret key.";
         }
@@ -682,6 +683,7 @@ module ietf-amt {
             }
             leaf request-timeout {
               type uint32;
+              units "second";
               description
                 "Initial time to wait for a response
                  to a Request message";
