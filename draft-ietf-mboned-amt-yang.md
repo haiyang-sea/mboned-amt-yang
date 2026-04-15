@@ -3,7 +3,7 @@ coding: utf-8
 
 title: A YANG Data Model for Automatic Multicast Tunneling (AMT)
 abbrev: YANG Data Model for AMT
-docname: draft-ietf-mboned-amt-yang-08
+docname: draft-ietf-mboned-amt-yang-latest
 category: std
 
 standalone: yes
@@ -119,11 +119,7 @@ informative:
 
 ## Conventions
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in BCP
-   14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all
-   capitals, as shown here.
+   {::boilerplate bcp14-tagged}
 
 ## Terminology
 
@@ -146,12 +142,12 @@ informative:
       AMT tunnels on the receiver's domain. Its primary role is to
       discover AMT Relays, establish AMT tunnels to them, receive
       multicast traffic over these tunnels, and then forward that
-      traffic natively within its local domain.
+      traffic directly within its local domain.
 
    *  Relay: A functional entity located in the source's domain
       or a multicast-enabled part of the Internet. Its primary role is
       to listen for requests from AMT Gateways, replicate multicast
-      traffic from native multicast routing domains, and encapsulate/
+      traffic from standard multicast routing domains, and encapsulate/
       forward this traffic through established AMT tunnels to requesting
       Gateways.
 
@@ -159,12 +155,12 @@ informative:
       established between an AMT Gateway (the tunnel head) and an AMT
       Relay (the tunnel tail). It is used to transport multicast
       packets from the Relay to the Gateway over networks that do not
-      support native IP multicast.
+      support built-in IP multicast.
 
    *  Pseudo-Interface: A logical interface within the AMT Gateway or
       Relay that represents the endpoint of an AMT tunnel. Multicast
       routing protocols interact with this interface as if it were a
-      physical interface receiving native multicast traffic.
+      physical interface receiving standard multicast traffic.
 
    *  Gateway Service: The functional component in the AMT protocol
       architecture. It interacts downstream with local multicast
@@ -180,7 +176,7 @@ informative:
       networks.
 
    *  Secret Key Rotation Interval: The maximum recommended validity period or
-      rotation interval for the private secret (or key) used by a AMT
+      rotation interval for the private secret (or key) used by an AMT
       Relay to compute Response Message Authentication Code (MAC) values,
       according to {{Section 5.3.6 of RFC7450}}.
 
@@ -196,7 +192,7 @@ informative:
    with their internal modules (Discovery, Tunnel Management, and Multicast
    Forwarding).
 
-~~~~ aasvg
+~~~~
          +------------------------------------------------+
          |            AMT Protocol Components             |
          +------------------------------------------------+
@@ -266,8 +262,8 @@ informative:
    The overall tree structure of the AMT YANG module is shown in
    {{fig-overall-tree}}.
 
-   The AMT YANG module augments the core routing YANG module "ietf-
-   routing" specified in {{RFC8349}}. Specifically, the AMT YANG module
+   The AMT YANG module augments the core routing YANG module "ietf-routing"
+   specified in {{RFC8349}}. Specifically, the AMT YANG module
    augments "/rt:routing/rt:control-plane-protocols".
 
 ~~~~ ascii-art
@@ -314,11 +310,11 @@ module: ietf-amt
        +--rw relay {amt-relay}?
        |  +--rw addresses
        |  |  +--rw address* [family]
-       |  |     +--rw family             identityref
-       |  |     +--rw anycast-prefix     inet:ip-prefix
-       |  |     +--rw local-address      inet:ip-address
-       |  +--rw tunnel-limit?            uint32
-       |  +--rw secret-key-rotation-interval?     uint32
+       |  |     +--rw family              identityref
+       |  |     +--rw anycast-prefix?     inet:ip-prefix
+       |  |     +--rw local-address?      inet:ip-address
+       |  +--rw tunnel-limit?             uint32
+       |  +--rw secret-key-rotation-interval?      uint32
        |  +--rw relay-dns-resource-records
        |  |  +--rw record* [source-address]
        |  |     +--rw source-address         inet:ip-address
@@ -340,8 +336,8 @@ module: ietf-amt
 
    'addresses':
    : Indicates the core address configurations for AMT Relay.
-   : This data node includes 'family', 'anycast-prefix', and 'local-
-   address'. The 'family' indicates the address family (IPv4 or IPv6).
+   : This data node includes 'family', 'anycast-prefix', and 'local-address'.
+   The 'family' indicates the address family (IPv4 or IPv6).
    The 'anycast-prefix' indicates the address prefix used by the Gateway
    to discover the Relay. The 'local-address' indicates the local
    interface address the Relay actually listens on and sends AMT
@@ -375,22 +371,22 @@ module: ietf-amt
    : Each tunnel entry ('tunnel') includes
    the IP address and port number of the tunnel opposite end ('gateway')
    ('gateway-address' and 'gateway-port'), the local IP address and UDP port number
-   used by the local ('relay') end for this tunnel ('local-address' and 'local-
-   port'), the tunnel status ('state'), the multicast flow information
+   used by the local ('relay') end for this tunnel ('local-address' and 'local-port'),
+   the tunnel status ('state'), the multicast flow information
    ('multicast-flows') carried by the tunnel, the number of different
-   multicast groups currently carried by this tunnel ('multicast-group-
-   num'), the message counter carried by the tunnel ('request-message-
-   count', 'membership-query-message-count', and 'membership-update-
-   message-count'), and the time on the most recent occasion at which
+   multicast groups currently carried by this tunnel ('multicast-group-num'),
+   the message counter carried by the tunnel ('request-message-count',
+   'membership-query-message-count', and 'membership-update-message-count'),
+   and the time on the most recent occasion at which
    any one or more of the tunnel's counters suffered a discontinuity
    ('discontinuity-time').
    : Each multicast flow information ('flow') has
    multicast source address ('source-address') and multicast group
    address ('group-address').
 
-   > Design note: The four data nodes ('gateway-address',
-   > 'gateway-port', 'local-address', and 'local-port) do not reuse
-   > the standard "udp-client" grouping defined in {{I-D.ietf-netconf-udp-client-server}}
+   > Design note: The four data nodes ('gateway-address', 'gateway-port',
+   > 'local-address', and 'local-port') do not reuse the standard
+   > "udp-client" grouping defined in {{I-D.ietf-netconf-udp-client-server}}
    > because AMT requires the Gateway to be a specific IP address (inet:ip-address),
    > while the "udp-client" grouping allows the use of domain names (inet:host).
    > Reuse could lead to configuration errors or runtime risks, so a custom structure
@@ -406,9 +402,9 @@ module: ietf-amt
        |  |  +--ro tunnel* [gateway-address gateway-port]
        |  |     +--ro gateway-address     inet:ip-address
        |  |     +--ro gateway-port        inet:port-number
-       |  |     +--ro local-address       inet:ip-address
-       |  |     +--ro local-port          inet:port-number
-       |  |     +--ro state               identityref
+       |  |     +--ro local-address?      inet:ip-address
+       |  |     +--ro local-port?         inet:port-number
+       |  |     +--ro state?              identityref
        |  |     +--ro multicast-flows
        |  |     |  +--ro flow* [source-address
        |  |     |     |         group-address]
@@ -416,14 +412,14 @@ module: ietf-amt
        |  |     |     |         ip-multicast-source-address
        |  |     |     +--ro group-address
        |  |     |               rt-types:ip-multicast-group-address
-       |  |     +--ro multicast-group-num        yang:gauge32
-       |  |     +--ro request-message-count
+       |  |     +--ro multicast-group-num?       yang:gauge32
+       |  |     +--ro request-message-count?
        |  |     |              yang:zero-based-counter64
-       |  |     +--ro membership-query-message-count
+       |  |     +--ro membership-query-message-count?
        |  |     |              yang:zero-based-counter64
-       |  |     +--ro membership-update-message-count
+       |  |     +--ro membership-update-message-count?
        |  |     |              yang:zero-based-counter64
-       |  |     +--ro discontinuity-time           yang:date-and-time
+       |  |     +--ro discontinuity-time?        yang:date-and-time
        |  +--ro relay-message-statistics
        |     ...
        +--rw gateway {amt-gateway}?
@@ -436,6 +432,7 @@ module: ietf-amt
    statistics handled by AMT Relay as shown in {{fig-stats-subtree}}.
 
 ~~~~ ascii-art
+module: ietf-amt
   augment /rt:routing/rt:control-plane-protocols:
     +--rw amt!
        +--rw relay {amt-relay}?
@@ -444,34 +441,34 @@ module: ietf-amt
        |  |  ...
        |  +--ro relay-message-statistics
        |     +--ro received
-       |     |  +--ro relay-discovery       yang:zero-based-counter64
-       |     |  +--ro request               yang:zero-based-counter64
-       |     |  +--ro membership-update     yang:zero-based-counter64
-       |     |  +--ro teardown              yang:zero-based-counter64
+       |     |  +--ro relay-discovery?      yang:zero-based-counter64
+       |     |  +--ro request?              yang:zero-based-counter64
+       |     |  +--ro membership-update?    yang:zero-based-counter64
+       |     |  +--ro teardown?             yang:zero-based-counter64
        |     +--ro sent
-       |     |  +--ro relay-advertisement yang:zero-based-counter64
-       |     |  +--ro membership-query      yang:zero-based-counter64
+       |     |  +--ro relay-advertisement? yang:zero-based-counter64
+       |     |  +--ro membership-query?     yang:zero-based-counter64
        |     +--ro error
-       |     |  +--ro incomplete-packet     yang:zero-based-counter64
-       |     |  +--ro invalid-mac           yang:zero-based-counter64
-       |     |  +--ro unexpected-type       yang:zero-based-counter64
-       |     |  +--ro invalid-relay-discovery-address
+       |     |  +--ro incomplete-packet?    yang:zero-based-counter64
+       |     |  +--ro invalid-mac?          yang:zero-based-counter64
+       |     |  +--ro unexpected-type?      yang:zero-based-counter64
+       |     |  +--ro invalid-relay-discovery-address?
        |     |  |                           yang:zero-based-counter64
-       |     |  +--ro invalid-membership-request-address
+       |     |  +--ro invalid-membership-request-address?
        |     |  |                           yang:zero-based-counter64
-       |     |  +--ro invalid-membership-update-address
+       |     |  +--ro invalid-membership-update-address?
        |     |  |                           yang:zero-based-counter64
-       |     |  +--ro incomplete-relay-discovery-messages
+       |     |  +--ro incomplete-relay-discovery-messages?
        |     |  |                           yang:zero-based-counter64
-       |     |  +--ro incomplete-membership-request-messages
+       |     |  +--ro incomplete-membership-request-messages?
        |     |  |                           yang:zero-based-counter64
-       |     |  +--ro incomplete-membership-update-messages
+       |     |  +--ro incomplete-membership-update-messages?
        |     |  |                           yang:zero-based-counter64
-       |     |  +--ro no-active-gateway     yang:zero-based-counter64
-       |     |  +--ro invalid-inner-header-checksum
+       |     |  +--ro no-active-gateway?    yang:zero-based-counter64
+       |     |  +--ro invalid-inner-header-checksum?
        |     |  |                           yang:zero-based-counter64
-       |     |  +--ro gateways-timed-out                 yang:gauge64
-       |     +--ro discontinuity-time       yang:date-and-time
+       |     |  +--ro gateways-timed-out?   yang:zero-based-counter64
+       |     +--ro discontinuity-time?      yang:date-and-time
        +--rw gateway {amt-gateway}?
           ...
 ~~~~
@@ -490,9 +487,9 @@ module: ietf-amt
        |  ...
        +--rw gateway {amt-gateway}?
           +--rw pseudo-interfaces
-          |  +--rw interface* [interface]
+          |  +--rw interface* [name]
           |     +--rw name                      if:interface-ref
-          |     +--rw discovery-method          identityref
+          |     +--rw discovery-method?         identityref
           |     +--rw relay-discovery-address?  inet:ip-address
           |     +--rw relay-address?            inet:ip-address
           |     +--rw relay-port?               inet:port-number
@@ -504,27 +501,28 @@ module: ietf-amt
           |     +--rw request-timeout?          uint32
           |     +--rw request-retrans-count?    uint32
           |     +--rw dest-unreach-retry-count? uint32
-          |     +--ro tunnel-state              identityref
-          |     +--ro relay-discovery-message-count
+          |     +--ro tunnel-state?             identityref
+          |     +--ro relay-discovery-message-count?
           |     |                      yang:zero-based-counter64
-          |     +--ro relay-advertisement-message-count
+          |     +--ro relay-advertisement-message-count?
           |     |                      yang:zero-based-counter64
-          |     +--ro request-message-count
+          |     +--ro request-message-count?
           |     |                      yang:zero-based-counter64
-          |     +--ro membership-query-message-count
+          |     +--ro membership-query-message-count?
           |     |                      yang:zero-based-counter64
-          |     +--ro membership-update-message-count
-          |                            yang:zero-based-counter64
+          |     +--ro membership-update-message-count?
+          |     |                      yang:zero-based-counter64
+          |     +--ro discontinuity-time?     yang:date-and-time
           +--ro gateway-message-statistics
-             +--ro discontinuity-time         yang:date-and-time
+             +--ro discontinuity-time?        yang:date-and-time
              +--ro received
-             |  +--ro relay-advertisement yang:zero-based-counter64
-             |  +--ro membership-query yang:zero-based-counter64
+             |  +--ro relay-advertisement? yang:zero-based-counter64
+             |  +--ro membership-query? yang:zero-based-counter64
              +--ro sent
-                +--ro relay-discovery yang:zero-based-counter64
-                +--ro request           yang:zero-based-counter64
-                +--ro membership-update yang:zero-based-counter64
-                +--ro teardown          yang:zero-based-counter64
+                +--ro relay-discovery? yang:zero-based-counter64
+                +--ro request?           yang:zero-based-counter64
+                +--ro membership-update? yang:zero-based-counter64
+                +--ro teardown?          yang:zero-based-counter64
 ~~~~
 {: #fig-gateway-subtree title="AMT Gateway Subtree Structure"}
 
@@ -556,822 +554,7 @@ module: ietf-amt
    {{RFC8343}}, and {{RFC8349}}.
 
 ~~~~ yang
-module ietf-amt {
-  yang-version "1.1";
-  namespace "urn:ietf:params:xml:ns:yang:ietf-amt";
-  prefix amt;
-
-  import ietf-inet-types {
-    prefix inet;
-    reference
-      "RFC 9911: Common YANG Data Types, Section 4";
-  }
-
-  import ietf-yang-types {
-    prefix yang;
-    reference
-      "RFC 9911: Common YANG Data Types, Section 3";
-  }
-
-  import ietf-routing-types {
-    prefix rt-types;
-    reference
-      "RFC 8294: Common YANG Data Types for the Routing Area";
-  }
-
-  import ietf-interfaces {
-    prefix if;
-    reference
-      "RFC 8343: A YANG Data Model for Interface Management";
-  }
-
-  import ietf-routing {
-    prefix rt;
-    reference
-      "RFC 8349: A YANG Data Model for Routing Management
-                 (NMDA Version)";
-  }
-
-  organization
-    "IETF Multicast Backbone Deployment (MBONED) Working Group";
-
-  contact
-    "WG Web:   <https://datatracker.ietf.org/wg/mboned/>
-     WG List:  MBONED <mailto:mboned@ietf.org>
-
-     Editor:   Yisong Liu
-               <mailto:liuyisong@chinamobile.com>
-     Editor:   Changwang Lin
-               <mailto:linchangwang.04414@h3c.com>
-     Editor:   Zheng(Sandy) Zhang
-               <mailto:zhang.zheng@zte.com.cn>
-     Editor:   Xuesong Geng
-               <mailto:gengxuesong@huawei.com>
-     Editor:   Vinod Kumar Nagaraj
-               <mailto:vinkumar@juniper.net>";
-
-  description
-    "This module describes a YANG data model for managing the 
-     Automatic Multicast Tunneling (AMT) protocol.
-
-     The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
-     NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
-     'MAY', and 'OPTIONAL' in this document are to be interpreted as
-     described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
-     they appear in all capitals, as shown here.
-
-     Copyright (c) 2026 IETF Trust and the persons identified as
-     authors of the code. All rights reserved.
-
-     Redistribution and use in source and binary forms, with or
-     without modification, is permitted pursuant to, and subject
-     to the license terms contained in, the Revised BSD License
-     set forth in Section 4.c of the IETF Trust's Legal Provisions
-     Relating to IETF Documents
-     (https://trustee.ietf.org/license-info).
-
-     All revisions of IETF and IANA published modules can be found
-     at the YANG Parameters registry group
-     (https://www.iana.org/assignments/yang-parameters).
-
-     This version of this YANG module is part of RFC XXXX; see the
-     RFC itself for full legal notices.";
-
-  revision 2026-03-10 {
-    description
-      "Initial Version";
-    reference
-      "RFC XXXX: A YANG Data Model for Automatic Multicast
-                 Tunneling (AMT)";
-  }
-
-  feature amt-gateway {
-    description
-      "Indicates support of AMT Gateway functionality.";
-    reference
-      "RFC 7450: Automatic Multicast Tunneling, Section 4.1.2";
-  }
-
-  feature amt-relay {
-    description
-      "Indicates support of AMT Relay functionality.";
-    reference
-      "RFC 7450: Automatic Multicast Tunneling, Section 4.1.3";
-  }
-
-  typedef ip-multicast-source-address {
-    type union {
-      type rt-types:ipv4-multicast-source-address;
-      type rt-types:ipv6-multicast-source-address;
-    }
-    description
-      "This type represents a version-neutral IP multicast source
-       address. The format of the textual representation implies
-       the IP address family.";
-  }
-
-  identity tunnel-state-base {
-    description
-      "Base identity for AMT tunnel states.";
-  }
-
-  identity up {
-    base tunnel-state-base;
-    description
-      "The AMT tunnel has been successfully established.";
-  }
-
-  identity establishing {
-    base tunnel-state-base;
-    description
-      "The AMT tunnel is being established.";
-  }
-
-  identity initial {
-    base tunnel-state-base;
-    description
-      "Initial AMT tunnel state.";
-  }
-
-  identity discoverying {
-    base tunnel-state-base;
-    description
-      "The Relay Discovery message has been sent
-       and is waiting for the Advertisement message.";
-  }
-
-  identity requesting {
-    base tunnel-state-base;
-    description
-      "The Request message has been sent, waiting for the Query
-       message.";
-  }
-
-  identity discovery-method-base {
-    description
-      "Base identity for all methods used to discover an
-       AMT Relay Address.
-       
-       New discovery methods should be defined by creating
-       new identities derived from this base identity.";
-  }
-
-  identity by-amt-solicit {
-    base discovery-method-base;
-    description
-      "Find the Relay Address by sending an AMT Discovery message.
-       
-       This method involves sending an AMT Discovery message to
-       discover available Relays in the network.";
-    reference
-      "RFC 7450: Automatic Multicast Tunneling, Section 5.1.1";
-  }
-
-  identity by-dns-reverse-ip {
-    base discovery-method-base;
-    description
-      "Find the Relay Address by DNS reverse IP AMT Discovery.
-       
-       This method uses DNS reverse IP lookup to discover AMT
-       Relays based on the client's IP address.";
-    reference
-      "RFC 8777: DNS Reverse IP Automatic Multicast Tunneling (AMT)
-                 Discovery";
-  }
-
-  augment "/rt:routing/rt:control-plane-protocols" {
-    description
-      "AMT augmentation to the routing instance model.";
-    container amt {
-      description
-        "Management parameters for the AMT protocol.";
-      container relay {
-        if-feature "amt-relay";
-        description
-          "Parameters of the AMT Relay service.";
-        container addresses {
-          description
-            "Parameters of AMT Relay Addresses.";
-          list address {
-            key "family";
-            description
-              "Each entry contains parameters for an AMT Relay
-               Address identified by the 'family' key. Under
-               normal operation, these addresses SHOULD belong
-               to the same address family indicated by 'family'.
-               Any mismatch is an indication of abnormal
-               configuration and is therefore allowed to be
-               reported.
-               
-               The 'anycast-prefix' serve as the discovery entry
-               for AMT Relays, while unicast IP addresses
-               'local-address' are the actual communication entities
-               of AMT Relays. The AMT Gateway first locates the AMT
-               Relay via the 'anycast-prefix' and then uses its
-               'local-address' to complete all subsequent AMT
-               interactions.";
-            leaf family {
-              type identityref {
-                base rt:address-family;
-              }
-              description
-                "Indicates the address family for the entry.";
-            }
-            leaf anycast-prefix {
-              type inet:ip-prefix;
-              description
-                "An anycast IP prefix of the AMT Relay Discovery
-                 Address which is used when sending discovery
-                 messages to a Relay.
-                 
-                 If 'family' is IPv4, it SHOULD be an IPv4 prefix;
-                 If 'family' is IPv6, it SHOULD be an IPv6 prefix.
-                 
-                 Any mismatch is an indication of abnormal
-                 configuration and is therefore allowed to be
-                 reported.";
-            }
-            leaf local-address {
-              type inet:ip-address;
-              description
-                "A unicast IP address of the AMT Relay Address
-                 which is obtained as a result of the discovery
-                 process.
-                 
-                 If 'family' is IPv4, it SHOULD be an IPv4 address;
-                 If 'family' is IPv6, it SHOULD be an IPv6 address.
-                 
-                 Any mismatch is an indication of abnormal
-                 configuration and is therefore allowed to be
-                 reported.";
-            }
-          }
-        }
-        leaf tunnel-limit {
-          type uint32;
-          description
-            "The total number of endpoints.";
-        }
-        leaf secret-key-rotation-interval {
-          type uint32;
-          units "minutes";
-          description
-            "Specifies the interval period for computing a new
-             private secret. This maximum RECOMMENDED interval
-             is 120 minutes.";
-          reference
-               "RFC 7450: Automatic Multicast Tunneling,
-                          Section 5.3.6";
-        }
-        container relay-dns-resource-records {
-          description
-            "The DNS Resource Records (RRs) of the AMT Relay.";
-          list record {
-            key "source-address";
-            description
-              "Specifies an RR entry.";
-            leaf source-address {
-              type inet:ip-address;
-              description
-                "The unicast IP address of multicast sender.";
-            }
-            leaf precedence {
-              type uint32;
-              description
-                "The precedence value of this record, used
-                 for Relay selection priority.
-                 
-                 Lower values indicate higher priority.
-                 Relays listed in AMT Relay records with
-                 a lower value for precedence are to be
-                 attempted first.";
-              reference
-                "RFC 8777: DNS Reverse IP Automatic Multicast
-                           Tunneling (AMT) Discovery,
-                           Section 4.2.1";
-            }
-            leaf d-bit {
-              type boolean;
-              default false;
-              description
-                "If the D-bit is set to true, the Gateway MAY
-                 send an AMT Request message directly to the
-                 discovered Relay Address without first
-                 sending an AMT Discovery message.
-                 
-                 If the D-bit is set to false, the Gateway MUST
-                 receive an AMT Relay advertisement message
-                 for an address before sending an AMT
-                 Request message to that address.";
-              reference
-                "RFC 8777: DNS Reverse IP Automatic Multicast
-                           Tunneling (AMT) Discovery,
-                           Section 4.2.2";
-            }
-            leaf relay-type {
-              type enumeration {
-                enum empty {
-                  value 0;
-                  description
-                    "The relay field is empty.";
-                }
-                enum ipv4-address {
-                  value 1;
-                  description
-                    "The relay field contains a 4-octet IPv4
-                     address.";
-                }
-                enum ipv6-address {
-                  value 2;
-                  description
-                    "The relay field contains a 16-octet IPv6
-                     address.";
-                }
-                enum domain-name {
-                  value 3;
-                  description
-                    "The relay field contains a wire-encoded
-                     domain name.";
-                }
-              }
-              description
-                "Indicates the type of Relay in the AMT Relay RR.
-                 
-                 Value 0 indicates that no AMT Relay should be
-                 used for multicast traffic from this source.
-                 
-                 Values 1 and 2 indicate that the IP address is
-                 used to describe the AMT Relay.
-                 
-                 Value 3 indicates that the domain name is
-                 used to describe the AMT Relay.";
-              reference
-                "RFC 8777: DNS Reverse IP Automatic Multicast
-                           Tunneling (AMT) Discovery,
-                           Section 4.2.3";
-            }
-            leaf discovery-address {
-              type inet:ip-address;
-              description
-                "The IP address of AMT Relay Discovery Address.
-                 
-                 When the 'relay-type' value is 1 or 2, this
-                 data node is used to indicate the AMT Relay of
-                 the AMT Relay RR.";
-            }
-            leaf domain-name {
-              type inet:domain-name;
-              description
-                "The wire-encoded domain name of the AMT Relay.
-                 
-                 When the 'relay-type' value is 3, this data node
-                 is used to indicate the AMT Relay of the AMT
-                 Relay RR.";
-            }
-          }
-        }
-        container tunnels {
-          config false;
-          description
-            "AMT tunnel session information, which contains
-             session parameters, state, and statistics for
-             all AMT tunnels established between Gateways
-             and this Relay.";
-          list tunnel {
-            key "gateway-address gateway-port";
-            description
-              "Records a tunnel entry.";
-            leaf gateway-address {
-              type inet:ip-address;
-              description
-                "The IP address of an AMT Gateway.";
-            }
-            leaf gateway-port {
-              type inet:port-number;
-              description
-                "The UDP port number of an AMT Gateway.";
-            }
-            leaf local-address {
-              type inet:ip-address;
-              description
-                "The local IP address of the AMT Relay.";
-            }
-            leaf local-port {
-              type inet:port-number;
-              description
-                "The local UDP port number of the AMT Relay.";
-            }
-            leaf state {
-              type identityref {
-                base tunnel-state-base;
-              }
-              description
-                "The state of AMT tunnel.";
-            }
-            container multicast-flows {
-              config false;
-              description
-                "The multicast flow information in the AMT tunnel.
-
-                 Contains operational data for all multicast
-                 flows being forwarded through AMT tunnels between
-                 this Relay and connected Gateways.";
-              list flow {
-                key "source-address group-address";
-                description
-                  "Records the characteristics of a multicast flow.";
-                leaf source-address {
-                  type ip-multicast-source-address;
-                  description
-                    "The source IP address of a multicast flow.
-
-                     It MUST belong to the same address family as
-                     group-address.";
-                }
-                leaf group-address {
-                  type rt-types:ip-multicast-group-address;
-                  description
-                    "The group IP address of a multicast flow.
-
-                     It MUST belong to the same address family as
-                     source-address.";
-                }
-              }
-            }
-            leaf multicast-group-num {
-              type yang:gauge32;
-              description
-                "Number of multicast groups.";
-            }
-            leaf request-message-count {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT Request messages received
-                 in the tunnel.";
-            }
-            leaf membership-query-message-count {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership Query messages sent
-                 in the tunnel.";
-            }
-            leaf membership-update-message-count {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership Update messages received
-                 in the tunnel.";
-            }
-            leaf discontinuity-time {
-              type yang:date-and-time;
-              description
-                "The time on the most recent occasion at which any
-                 one or more of this AMT tunnel's counters suffered
-                 a discontinuity.
-
-                 If no such discontinuities have occurred since the
-                 last re-initialization of the AMT tunnel, then this
-                 node contains the time when the AMT tunnel was last
-                 initialized or the tunnel was established.";
-            }
-          }
-        }
-        container relay-message-statistics {
-          config false;
-          description
-            "Message statistics of an AMT Relay.";
-          container received {
-            description
-              "Received message statistics of AMT Relay.";
-            leaf relay-discovery {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT Relay Discovery messages
-                 received.";
-            }
-            leaf request {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership Request messages
-                 received.";
-            }
-            leaf membership-update {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership Update messages
-                 received.";
-            }
-            leaf teardown {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT Teardown messages received.";
-            }
-          }
-          container sent {
-            description
-              "Sent message statistics of AMT Relay.";
-            leaf relay-advertisement {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT Relay advertisement messages sent.";
-            }
-            leaf membership-query {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership Query messages sent.";
-            }
-          }
-          container error {
-            description
-              "Error message statistics of AMT Relay.";
-            leaf incomplete-packet {
-              type yang:zero-based-counter64;
-              description
-                "Number of messages received with length errors
-                 so severe that further classification could not
-                 occur.";
-            }
-            leaf invalid-mac {
-              type yang:zero-based-counter64;
-              description
-                "Number of messages received with an invalid
-                 Message Authentication Code (MAC).";
-            }
-            leaf unexpected-type {
-              type yang:zero-based-counter64;
-              description
-                "Number of messages received with an unknown
-                 message type specified.";
-            }
-            leaf invalid-relay-discovery-address {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT Relay Discovery messages
-                 received with an address other than the
-                 configured anycast address.";
-            }
-            leaf invalid-membership-request-address {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership request messages
-                 received with an address other than the
-                 configured AMT local address.";
-            }
-            leaf invalid-membership-update-address {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership update messages
-                 received with an address other than the
-                 configured AMT local address.";
-            }
-            leaf incomplete-relay-discovery-messages {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT Relay Discovery messages
-                 received that are not fully formed.";
-            }
-            leaf incomplete-membership-request-messages {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership request messages
-                 received that are not fully formed.";
-            }
-            leaf incomplete-membership-update-messages {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership update messages
-                 received that are not fully formed.";
-            }
-            leaf no-active-gateway {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership update messages
-                 received for a tunnel that does not exist
-                 for the Gateway that sent the message.";
-            }
-            leaf invalid-inner-header-checksum {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership update messages
-                 received with an invalid IP checksum.";
-            }
-            leaf gateways-timed-out {
-              type yang:gauge64;
-              description
-                "Number of Gateways that timed out because
-                 of inactivity.";
-            }
-          }
-          leaf discontinuity-time {
-            type yang:date-and-time;
-            description
-              "The time on the most recent occasion at which any
-               one or more of this AMT tunnel's message counters
-               suffered a discontinuity.
-
-               If no such discontinuities have occurred since the
-               last re-initialization of the AMT tunnel, then this
-               node contains the time when the AMT tunnel was last
-               initialized or the tunnel was established.";
-          }
-        }
-      } // relay
-      container gateway {
-        if-feature "amt-gateway";
-        description
-          "Parameters of AMT Gateway service.";
-        container pseudo-interfaces {
-          description
-            "Parameters of AMT pseudo-interface.";
-          list interface {
-            key "name";
-            description
-              "An entry of AMT pseudo-interface.";
-            leaf name {
-              type if:interface-ref;
-              description
-                "Indicates the name of a pseudo interface.";
-            }
-            leaf discovery-method {
-              type identityref {
-                base discovery-method-base;
-              }
-              description
-                "The method used to discover the relay address.";
-            }
-            leaf relay-discovery-address {
-              type inet:ip-address;
-              description
-                "Specifies the AMT Relay Discovery Address.";
-            }
-            leaf relay-address {
-              type inet:ip-address;
-              description
-                "Specifies the IP address of the AMT Relay.";
-            }
-            leaf relay-port {
-              type inet:port-number;
-              description
-                "The UDP port number of the AMT Relay.";
-            }
-            leaf local-address {
-              type inet:ip-address;
-              config false;
-              description
-                "The local IP address of this AMT tunnel.";
-            }
-            leaf local-port {
-              type inet:port-number;
-              config false;
-              description
-                "The local UDP port number of this AMT tunnel.";
-            }
-            leaf upstream-interface {
-              type if:interface-ref;
-              description
-                "Indicates the upstream interface to reach the AMT
-                 Relay.";
-            }
-            leaf discovery-timeout {
-              type uint32;
-              units "seconds";
-              description
-                "Initial time to wait for a response to
-                 a Relay Discovery message.";
-            }
-            leaf discovery-retrans-count {
-              type uint32;
-              description
-                "Maximum number of Relay Discovery retransmissions
-                 to allow before terminating Relay Discovery
-                 and reporting an error.";
-            }
-            leaf request-timeout {
-              type uint32;
-              units "seconds";
-              description
-                "Initial time to wait for a response
-                 to a Request message";
-            }
-            leaf request-retrans-count {
-              type uint32;
-              description
-                "Maximum number of Request retransmissions
-                 to allow before abandoning a Relay and restarting
-                 Relay Discovery or reporting an error.";
-            }
-            leaf dest-unreach-retry-count {
-              type uint32;
-              description
-                "The maximum number of times a Gateway should
-                 attempt to send the same Request or Membership
-                 Update message after receiving an ICMP Destination
-                 Unreachable message.";
-            }
-            leaf tunnel-state {
-              type identityref {
-                base tunnel-state-base;
-              }
-              config false;
-              description
-                "The tunnel's state.";
-            }
-            leaf relay-discovery-message-count {
-              type yang:zero-based-counter64;
-              config false;
-              description
-                "Number of AMT Relay Discovery messages sent
-                 on the interface.";
-            }
-            leaf relay-advertisement-message-count {
-              type yang:zero-based-counter64;
-              config false;
-              description
-                "Number of AMT Relay advertisement messages received
-                 on the interface.";
-            }
-            leaf request-message-count {
-              type yang:zero-based-counter64;
-              config false;
-              description
-                "Number of AMT membership request messages sent
-                 on the interface.";
-            }
-            leaf membership-query-message-count {
-              type yang:zero-based-counter64;
-              config false;
-              description
-                "Number of AMT membership query messages received
-                 on the interface.";
-            }
-            leaf membership-update-message-count {
-              type yang:zero-based-counter64;
-              config false;
-              description
-                "Number of AMT membership update messages sent
-                 on the interface.";
-            }
-          }
-        }
-        container gateway-message-statistics {
-          config false;
-          description
-            "Message statistics of the AMT Gateway.";
-          leaf discontinuity-time {
-            type yang:date-and-time;
-            description
-              "The time on the most recent occasion at which the AMT
-               Gateway message counters suffered a discontinuity.
-
-               If no such discontinuities have occurred since the
-               last re-initialization of the Gateway, then this
-               data node contains the time when the Gateway was last
-               initialized.";
-          }
-          container received {
-            description
-              "Received message statistics of the AMT Gateway.";
-            leaf relay-advertisement {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT Relay advertisement messages
-                 received.";
-            }
-            leaf membership-query {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership query messages
-                 received.";
-            }
-          }
-          container sent {
-            description
-              "Sent message statistics of the AMT Gateway.";
-            leaf relay-discovery {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT Relay Discovery messages sent.";
-            }
-            leaf request {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership request messages sent.";
-            }
-            leaf membership-update {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT membership update messages sent.";
-            }
-            leaf teardown {
-              type yang:zero-based-counter64;
-              description
-                "Number of AMT teardown messages sent.";
-            }
-          }
-        }
-      } // gateway
-    } // amt
-  } // augment
-}
+{::include-fold ./yang/ietf-amt@2026-03-10.yang}
 ~~~~
 {: sourcecode-markers="true" sourcecode-name="ietf-amt@2026-03-10.yang"}
 
@@ -1542,114 +725,7 @@ and Andy Newton for the IESG review.
 # Full Tree {#full-tree}
 
 ~~~~ ascii-art
-module: ietf-amt
-  augment /rt:routing/rt:control-plane-protocols:
-    +--rw amt!
-       +--rw relay {amt-relay}?
-       |  +--rw addresses
-       |  |  +--rw address* [family]
-       |  |     +--rw family             identityref
-       |  |     +--rw anycast-prefix     inet:ip-prefix
-       |  |     +--rw local-address      inet:ip-address
-       |  +--rw tunnel-limit?            uint32
-       |  +--rw secret-key-rotation-interval?     uint32
-       |  +--rw relay-dns-resource-records
-       |  |  +--rw record* [source-address]
-       |  |     +--rw source-address         inet:ip-address
-       |  |     +--rw precedence?            uint32
-       |  |     +--rw d-bit?                 boolean
-       |  |     +--rw relay-type?            enumeration
-       |  |     +--rw discovery-address?     inet:ip-address
-       |  |     +--rw domain-name?           inet:domain-name
-       |  +--ro tunnels
-       |  |  +--ro tunnel* [gateway-address gateway-port]
-       |  |     +--ro gateway-address     inet:ip-address
-       |  |     +--ro gateway-port        inet:port-number
-       |  |     +--ro local-address       inet:ip-address
-       |  |     +--ro local-port          inet:port-number
-       |  |     +--ro state               identityref
-       |  |     +--ro multicast-flows
-       |  |     |  +--ro flow* [source-address
-       |  |     |     |         group-address]
-       |  |     |     +--ro source-address
-       |  |     |     |         ip-multicast-source-address
-       |  |     |     +--ro group-address
-       |  |     |               rt-types:ip-multicast-group-address
-       |  |     +--ro multicast-group-num        yang:gauge32
-       |  |     +--ro request-message-count
-       |  |     |              yang:zero-based-counter64
-       |  |     +--ro membership-query-message-count
-       |  |     |              yang:zero-based-counter64
-       |  |     +--ro membership-update-message-count
-       |  |     |              yang:zero-based-counter64
-       |  |     +--ro discontinuity-time           yang:date-and-time
-       |  +--ro relay-message-statistics
-       |     +--ro received
-       |     |  +--ro relay-discovery       yang:zero-based-counter64
-       |     |  +--ro request               yang:zero-based-counter64
-       |     |  +--ro membership-update     yang:zero-based-counter64
-       |     |  +--ro teardown              yang:zero-based-counter64
-       |     +--ro sent
-       |     |  +--ro relay-advertisement yang:zero-based-counter64
-       |     |  +--ro membership-query      yang:zero-based-counter64
-       |     +--ro error
-       |     |  +--ro incomplete-packet     yang:zero-based-counter64
-       |     |  +--ro invalid-mac           yang:zero-based-counter64
-       |     |  +--ro unexpected-type       yang:zero-based-counter64
-       |     |  +--ro invalid-relay-discovery-address
-       |     |  |                           yang:zero-based-counter64
-       |     |  +--ro invalid-membership-request-address
-       |     |  |                           yang:zero-based-counter64
-       |     |  +--ro invalid-membership-update-address
-       |     |  |                           yang:zero-based-counter64
-       |     |  +--ro incomplete-relay-discovery-messages
-       |     |  |                           yang:zero-based-counter64
-       |     |  +--ro incomplete-membership-request-messages
-       |     |  |                           yang:zero-based-counter64
-       |     |  +--ro incomplete-membership-update-messages
-       |     |  |                           yang:zero-based-counter64
-       |     |  +--ro no-active-gateway     yang:zero-based-counter64
-       |     |  +--ro invalid-inner-header-checksum
-       |     |  |                           yang:zero-based-counter64
-       |     |  +--ro gateways-timed-out                 yang:gauge64
-       |     +--ro discontinuity-time       yang:date-and-time
-       +--rw gateway {amt-gateway}?
-          +--rw pseudo-interfaces
-          |  +--rw interface* [interface]
-          |     +--rw name                      if:interface-ref
-          |     +--rw discovery-method          identityref
-          |     +--rw relay-discovery-address?  inet:ip-address
-          |     +--rw relay-address?            inet:ip-address
-          |     +--rw relay-port?               inet:port-number
-          |     +--ro local-address?            inet:ip-address
-          |     +--ro local-port?               inet:port-number
-          |     +--rw upstream-interface?       if:interface-ref
-          |     +--rw discovery-timeout?        uint32
-          |     +--rw discovery-retrans-count?  uint32
-          |     +--rw request-timeout?          uint32
-          |     +--rw request-retrans-count?    uint32
-          |     +--rw dest-unreach-retry-count? uint32
-          |     +--ro tunnel-state              identityref
-          |     +--ro relay-discovery-message-count
-          |     |                      yang:zero-based-counter64
-          |     +--ro relay-advertisement-message-count
-          |     |                      yang:zero-based-counter64
-          |     +--ro request-message-count
-          |     |                      yang:zero-based-counter64
-          |     +--ro membership-query-message-count
-          |     |                      yang:zero-based-counter64
-          |     +--ro membership-update-message-count
-          |                            yang:zero-based-counter64
-          +--ro gateway-message-statistics
-             +--ro discontinuity-time         yang:date-and-time
-             +--ro received
-             |  +--ro relay-advertisement yang:zero-based-counter64
-             |  +--ro membership-query yang:zero-based-counter64
-             +--ro sent
-                +--ro relay-discovery yang:zero-based-counter64
-                +--ro request           yang:zero-based-counter64
-                +--ro membership-update yang:zero-based-counter64
-                +--ro teardown          yang:zero-based-counter64
+{::include-fold ./yang/trees/ietf-amt@2026-03-10.tree}
 ~~~~
 
 # Data Model Example
@@ -1660,8 +736,8 @@ module: ietf-amt
    The example is represented in both XML {{W3C.REC-xml-20081126}} and
    JSON {{RFC7951}} formats.
 
-   {{fig-example-xml}} shows a sample configuration for an AMT Relay service in
-   XML format. This example configures the protocol address family
+   {{fig-relay-example-xml}} shows a sample configuration for an AMT Relay
+   service in XML format. This example configures the protocol address family
    (IPv4 or IPv6), secret key rotation interval (120 minutes), and tunnel limit
    (10) for AMT Relay function. In addition, the AMT anycast prefix is
    set to 192.0.2.1/32 for IPv4 and 2001:db8::1/128 for IPv6, and the
@@ -1696,9 +772,9 @@ module: ietf-amt
   </control-plane-protocols>
 </routing>
 ~~~~
-{: #fig-example-xml title="Data Model Example in XML"}
+{: #fig-relay-example-xml title="Data Model Example for Relay in XML"}
 
-   {{fig-example-json}} shows the same sample configuration for an AMT Relay
+   {{fig-relay-example-json}} shows the same sample configuration for an AMT Relay
    service in JSON format.
 
 ~~~~ json
@@ -1729,4 +805,105 @@ module: ietf-amt
   }
 }
 ~~~~
-{: #fig-example-json title="Data Model Example in JSON"}
+{: #fig-relay-example-json title="Data Model Example for Relay in JSON"}
+
+   {{fig-gateway-example-xml}} shows a sample configuration for an AMT Gateway service in XML format.
+   This example configures two AMT pseudo-interfaces, amt0 and amt1. The Relay Discovery method
+   is set to send an AMT Discovery message.
+   For amt0, the Relay Discovery Address is configured as 192.0.2.1; for amt1, it is 2001:db8::1.
+   Additionally, the initial time to wait for a response to a Relay Discovery message is
+   set to 60 seconds for both interfaces. Likewise, the initial time to wait for
+   a response to a Request message is also configured to 60 seconds for both amt0 and amt1.
+
+~~~~ xml
+<?xml version="1.0" encoding="UTF-8"?>
+<interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces"
+            xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
+  <interface>
+    <name>Tunnel0</name>
+    <type>ianaift:tunnel</type>
+    <enabled>true</enabled>
+  </interface>
+  <interface>
+    <name>Tunnel1</name>
+    <type>ianaift:tunnel</type>
+    <enabled>true</enabled>
+  </interface>
+</interfaces>
+<routing xmlns="urn:ietf:params:xml:ns:yang:ietf-routing">
+  <control-plane-protocols>
+    <amt xmlns="urn:ietf:params:xml:ns:yang:ietf-amt">
+      <gateway>
+        <pseudo-interfaces>
+          <interface>
+            <name>Tunnel0</name>
+            <discovery-method>by-amt-solicit</discovery-method>
+            <relay-discovery-address>192.0.2.1</
+             relay-discovery-address>
+            <discovery-timeout>60</discovery-timeout>
+            <request-timeout>60</request-timeout>
+          </interface>
+          <interface>
+            <name>Tunnel1</name>
+            <discovery-method>by-amt-solicit</discovery-method>
+            <relay-discovery-address>2001:db8::1</
+             relay-discovery-address>
+            <discovery-timeout>60</discovery-timeout>
+            <request-timeout>60</request-timeout>
+          </interface>
+        </pseudo-interfaces>
+      </gateway>
+    </amt>
+  </control-plane-protocols>
+</routing>
+~~~~
+{: #fig-gateway-example-xml title="Data Model Example for Gateway in XML"}
+
+   {{fig-gateway-example-json}} shows the same sample configuration for an AMT Gateway
+   service in JSON format.
+
+~~~~ json
+{
+  "ietf-interfaces:interfaces": {
+    "interface": [
+      {
+        "name": "Tunnel0",
+        "type": "iana-if-type:tunnel",
+        "enabled": true
+      },
+      {
+        "name": "Tunnel1",
+        "type": "iana-if-type:tunnel",
+        "enabled": true
+      }
+    ]
+  },
+  "ietf-routing:routing": {
+    "control-plane-protocols": {
+      "ietf-amt:amt": {
+        "gateway": {
+          "pseudo-interfaces": {
+            "interface": [
+              {
+                "name": "Tunnel0",
+                "discovery-method": "by-amt-solicit",
+                "relay-discovery-address": "192.0.2.1",
+                "discovery-timeout": 60,
+                "request-timeout": 60
+              },
+              {
+                "name": "Tunnel1",
+                "discovery-method": "by-amt-solicit",
+                "relay-discovery-address": "2001:db8::1",
+                "discovery-timeout": 60,
+                "request-timeout": 60
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+~~~~
+{: #fig-gateway-example-json title="Data Model Example for Gateway in JSON"}
