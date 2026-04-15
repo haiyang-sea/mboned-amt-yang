@@ -1,15 +1,15 @@
 module: ietf-amt
 
   augment /rt:routing/rt:control-plane-protocols:
-    +--rw amt
+    +--rw amt!
        +--rw relay {amt-relay}?
        |  +--rw addresses
        |  |  +--rw address* [family]
        |  |     +--rw family            identityref
        |  |     +--rw anycast-prefix?   inet:ip-prefix
        |  |     +--rw local-address?    inet:ip-address
-       |  +--rw tunnel-limit?                 uint32
-       |  +--rw secret-key-timeout?           uint32
+       |  +--rw tunnel-limit?                   uint32
+       |  +--rw secret-key-rotation-interval?   uint32
        |  +--rw relay-dns-resource-records
        |  |  +--rw record* [source-address]
        |  |     +--rw source-address       inet:ip-address
@@ -79,7 +79,7 @@ module: ietf-amt
        |     |  +--ro invalid-inner-header-checksum?
        |     |  |       yang:zero-based-counter64
        |     |  +--ro gateways-timed-out?
-       |     |          yang:gauge64
+       |     |          yang:zero-based-counter64
        |     +--ro discontinuity-time?   yang:date-and-time
        +--rw gateway {amt-gateway}?
           +--rw pseudo-interfaces
@@ -116,7 +116,9 @@ module: ietf-amt
           |     +--ro membership-query-message-count?
           |     |       yang:zero-based-counter64
           |     +--ro membership-update-message-count?
-          |             yang:zero-based-counter64
+          |     |       yang:zero-based-counter64
+          |     +--rw discontinuity-time?
+          |             yang:date-and-time
           +--ro gateway-message-statistics
              +--ro discontinuity-time?   yang:date-and-time
              +--ro received
