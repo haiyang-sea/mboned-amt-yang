@@ -135,7 +135,7 @@ module ietf-amt {
       "Initial AMT tunnel state.";
   }
 
-  identity discoverying {
+  identity discovering {
     base tunnel-state-base;
     description
       "The Relay Discovery message has been sent
@@ -152,7 +152,7 @@ module ietf-amt {
   identity discovery-method-base {
     description
       "Base identity for all methods used to discover an
-       AMT relay address.
+       AMT Relay Address.
 
        New discovery methods should be defined by creating
        new identities derived from this base identity.";
@@ -161,10 +161,9 @@ module ietf-amt {
   identity by-amt-solicit {
     base discovery-method-base;
     description
-      "Find the relay address by sending an AMT Discovery message.
-
+      "Find the Relay Address by sending an AMT Discovery message.
        This method involves sending an AMT Discovery message to
-       discover available relays in the network.";
+       discover available Relays in the network.";
     reference
       "RFC 7450: Automatic Multicast Tunneling, Section 5.1.1";
   }
@@ -172,10 +171,10 @@ module ietf-amt {
   identity by-dns-reverse-ip {
     base discovery-method-base;
     description
-      "Find the relay address by DNS reverse IP AMT Discovery.
+      "Find the Relay Address by DNS reverse IP AMT Discovery.
 
        This method uses DNS reverse IP lookup to discover AMT
-       relays based on the client's IP address.";
+       Relays based on the client's IP address.";
     reference
       "RFC 8777: DNS Reverse IP Automatic Multicast Tunneling (AMT)
                  Discovery";
@@ -185,20 +184,21 @@ module ietf-amt {
     description
       "AMT augmentation to the routing instance model.";
     container amt {
+      presence "Enables AMT";
       description
         "Management parameters for the AMT protocol.";
       container relay {
         if-feature "amt-relay";
         description
-          "Parameters of the AMT relay service.";
+          "Parameters of the AMT Relay service.";
         container addresses {
           description
-            "Parameters of AMT relay addresses.";
+            "Parameters of AMT Relay Addresses.";
           list address {
             key "family";
             description
-              "Each entry contains parameters for an AMT relay
-               address identified by the 'family' key. Under
+              "Each entry contains parameters for an AMT Relay
+               Address identified by the 'family' key. Under
                normal operation, these addresses SHOULD belong
                to the same address family indicated by 'family'.
                Any mismatch is an indication of abnormal
@@ -206,10 +206,10 @@ module ietf-amt {
                reported.
 
                The 'anycast-prefix' serve as the discovery entry
-               for AMT relays, while unicast IP addresses
+               for AMT Relays, while unicast IP addresses
                'local-address' are the actual communication entities
-               of AMT relays. The AMT gateway first locates the AMT
-               relay via the 'anycast-prefix' and then uses its
+               of AMT Relays. The AMT Gateway first locates the AMT
+               Relay via the 'anycast-prefix' and then uses its
                'local-address' to complete all subsequent AMT
                interactions.";
             leaf family {
@@ -222,9 +222,9 @@ module ietf-amt {
             leaf anycast-prefix {
               type inet:ip-prefix;
               description
-                "An anycast IP prefix of the AMT relay discovery
-                 address which is used when sending discovery
-                 messages to a relay.
+                "An anycast IP prefix of the AMT Relay Discovery
+                 Address which is used when sending discovery
+                 messages to a Relay.
 
                  If 'family' is IPv4, it SHOULD be an IPv4 prefix;
                  If 'family' is IPv6, it SHOULD be an IPv6 prefix.
@@ -236,9 +236,10 @@ module ietf-amt {
             leaf local-address {
               type inet:ip-address;
               description
-                "A unicast IP address of the AMT relay address
-                 which is obtained as a result of the discovery
-                 process.
+                "A unicast IP address of the AMT Relay Address
+                 that is statically configured on the Relay device.
+                 This address is used by the AMT Gateway to establish
+                 tunnels.
 
                  If 'family' is IPv4, it SHOULD be an IPv4 address;
                  If 'family' is IPv6, it SHOULD be an IPv6 address.
@@ -252,17 +253,23 @@ module ietf-amt {
         leaf tunnel-limit {
           type uint32;
           description
-            "The total number of endpoints.";
+            "The maximum number of endpoint Gateways that a Relay can
+             serve simultaneously.";
         }
-        leaf secret-key-timeout {
+        leaf secret-key-rotation-interval {
           type uint32;
-          units "minute";
+          units "minutes";
           description
-            "The timeout interval of secret key.";
+            "Specifies the interval period for computing a new
+             private secret. This maximum RECOMMENDED interval
+             is 120 minutes.";
+          reference
+               "RFC 7450: Automatic Multicast Tunneling,
+                          Section 5.3.6";
         }
         container relay-dns-resource-records {
           description
-            "The DNS Resource Records (RRs) of the AMT relay.";
+            "The DNS Resource Records (RRs) of the AMT Relay.";
           list record {
             key "source-address";
             description
@@ -276,10 +283,10 @@ module ietf-amt {
               type uint32;
               description
                 "The precedence value of this record, used
-                 for relay selection priority.
+                 for Relay selection priority.
 
                  Lower values indicate higher priority.
-                 Relays listed in AMT relay records with
+                 Relays listed in AMT Relay records with
                  a lower value for precedence are to be
                  attempted first.";
               reference
@@ -291,13 +298,13 @@ module ietf-amt {
               type boolean;
               default false;
               description
-                "If the D-bit is set to true, the gateway MAY
+                "If the D-bit is set to true, the Gateway MAY
                  send an AMT Request message directly to the
-                 discovered relay address without first
+                 discovered Relay Address without first
                  sending an AMT Discovery message.
 
-                 If the D-bit is set to false, the gateway MUST
-                 receive an AMT relay advertisement message
+                 If the D-bit is set to false, the Gateway MUST
+                 receive an AMT Relay advertisement message
                  for an address before sending an AMT
                  Request message to that address.";
               reference
@@ -332,16 +339,16 @@ module ietf-amt {
                 }
               }
               description
-                "Indicates the type of relay in the AMT relay RR.
+                "Indicates the type of Relay in the AMT Relay RR.
 
-                 Value 0 indicates that no AMT relay should be
+                 Value 0 indicates that no AMT Relay should be
                  used for multicast traffic from this source.
 
                  Values 1 and 2 indicate that the IP address is
-                 used to describe the AMT relay.
+                 used to describe the AMT Relay.
 
                  Value 3 indicates that the domain name is
-                 used to describe the AMT relay.";
+                 used to describe the AMT Relay.";
               reference
                 "RFC 8777: DNS Reverse IP Automatic Multicast
                            Tunneling (AMT) Discovery,
@@ -349,21 +356,33 @@ module ietf-amt {
             }
             leaf discovery-address {
               type inet:ip-address;
+              must "(../relay-type = 'ipv4-address' or "
+                 + "../relay-type = 'ipv6-address')" {
+                error-message
+                  "The 'discovery-address' can only be configured
+                   when the 'relay-type' is ipv4-address or
+                   ipv6-address.";
+              }
               description
-                "The IP address of AMT relay discovery address.
+                "The IP address of AMT Relay Discovery Address.
 
                  When the 'relay-type' value is 1 or 2, this
-                 data node is used to indicate the AMT relay of
-                 the AMT relay RR.";
+                 data node is used to indicate the AMT Relay of
+                 the AMT Relay RR.";
             }
             leaf domain-name {
               type inet:domain-name;
+              must "../relay-type = 'domain-name'" {
+                error-message
+                  "The 'domain-name' can only be configured when
+                   the 'relay-type' is domain-name.";
+              }
               description
-                "The wire-encoded domain name of the AMT relay.
+                "The wire-encoded domain name of the AMT Relay.
 
                  When the 'relay-type' value is 3, this data node
-                 is used to indicate the AMT relay of the AMT
-                 relay RR.";
+                 is used to indicate the AMT Relay of the AMT
+                 Relay RR.";
             }
           }
         }
@@ -372,8 +391,8 @@ module ietf-amt {
           description
             "AMT tunnel session information, which contains
              session parameters, state, and statistics for
-             all AMT tunnels established between gateways
-             and this relay.";
+             all AMT tunnels established between Gateways
+             and this Relay.";
           list tunnel {
             key "gateway-address gateway-port";
             description
@@ -381,22 +400,22 @@ module ietf-amt {
             leaf gateway-address {
               type inet:ip-address;
               description
-                "The IP address of an AMT gateway.";
+                "The IP address of an AMT Gateway.";
             }
             leaf gateway-port {
               type inet:port-number;
               description
-                "The UDP port number of an AMT gateway.";
+                "The UDP port number of an AMT Gateway.";
             }
             leaf local-address {
               type inet:ip-address;
               description
-                "The local IP address of the AMT relay.";
+                "The local IP address of the AMT Relay.";
             }
             leaf local-port {
               type inet:port-number;
               description
-                "The local UDP port number of the AMT relay.";
+                "The local UDP port number of the AMT Relay.";
             }
             leaf state {
               type identityref {
@@ -412,7 +431,7 @@ module ietf-amt {
 
                  Contains operational data for all multicast
                  flows being forwarded through AMT tunnels between
-                 this relay and connected gateways.";
+                 this Relay and connected Gateways.";
               list flow {
                 key "source-address group-address";
                 description
@@ -475,14 +494,14 @@ module ietf-amt {
         container relay-message-statistics {
           config false;
           description
-            "Message statistics of an AMT relay.";
+            "Message statistics of an AMT Relay.";
           container received {
             description
-              "Received message statistics of AMT relay.";
+              "Received message statistics of AMT Relay.";
             leaf relay-discovery {
               type yang:zero-based-counter64;
               description
-                "Number of AMT relay discovery messages
+                "Number of AMT Relay Discovery messages
                  received.";
             }
             leaf request {
@@ -505,11 +524,11 @@ module ietf-amt {
           }
           container sent {
             description
-              "Sent message statistics of AMT relay.";
+              "Sent message statistics of AMT Relay.";
             leaf relay-advertisement {
               type yang:zero-based-counter64;
               description
-                "Number of AMT relay advertisement messages sent.";
+                "Number of AMT Relay advertisement messages sent.";
             }
             leaf membership-query {
               type yang:zero-based-counter64;
@@ -519,7 +538,7 @@ module ietf-amt {
           }
           container error {
             description
-              "Error message statistics of AMT relay.";
+              "Error message statistics of AMT Relay.";
             leaf incomplete-packet {
               type yang:zero-based-counter64;
               description
@@ -542,7 +561,7 @@ module ietf-amt {
             leaf invalid-relay-discovery-address {
               type yang:zero-based-counter64;
               description
-                "Number of AMT relay discovery messages
+                "Number of AMT Relay Discovery messages
                  received with an address other than the
                  configured anycast address.";
             }
@@ -563,7 +582,7 @@ module ietf-amt {
             leaf incomplete-relay-discovery-messages {
               type yang:zero-based-counter64;
               description
-                "Number of AMT relay discovery messages
+                "Number of AMT Relay Discovery messages
                  received that are not fully formed.";
             }
             leaf incomplete-membership-request-messages {
@@ -583,7 +602,7 @@ module ietf-amt {
               description
                 "Number of AMT membership update messages
                  received for a tunnel that does not exist
-                 for the gateway that sent the message.";
+                 for the Gateway that sent the message.";
             }
             leaf invalid-inner-header-checksum {
               type yang:zero-based-counter64;
@@ -592,9 +611,9 @@ module ietf-amt {
                  received with an invalid IP checksum.";
             }
             leaf gateways-timed-out {
-              type yang:gauge64;
+              type yang:zero-based-counter64;
               description
-                "Number of gateways that timed out because
+                "Number of Gateways that timed out because
                  of inactivity.";
             }
           }
@@ -615,7 +634,7 @@ module ietf-amt {
       container gateway {
         if-feature "amt-gateway";
         description
-          "Parameters of AMT gateway service.";
+          "Parameters of AMT Gateway service.";
         container pseudo-interfaces {
           description
             "Parameters of AMT pseudo-interface.";
@@ -638,17 +657,17 @@ module ietf-amt {
             leaf relay-discovery-address {
               type inet:ip-address;
               description
-                "Specifies the AMT relay discovery address.";
+                "Specifies the AMT Relay Discovery Address.";
             }
             leaf relay-address {
               type inet:ip-address;
               description
-                "Specifies the IP address of the AMT relay.";
+                "Specifies the IP address of the AMT Relay.";
             }
             leaf relay-port {
               type inet:port-number;
               description
-                "The UDP port number of the AMT relay.";
+                "The UDP port number of the AMT Relay.";
             }
             leaf local-address {
               type inet:ip-address;
@@ -666,10 +685,11 @@ module ietf-amt {
               type if:interface-ref;
               description
                 "Indicates the upstream interface to reach the AMT
-                 relay.";
+                 Relay.";
             }
             leaf discovery-timeout {
               type uint32;
+              units "seconds";
               description
                 "Initial time to wait for a response to
                  a Relay Discovery message.";
@@ -678,12 +698,12 @@ module ietf-amt {
               type uint32;
               description
                 "Maximum number of Relay Discovery retransmissions
-                 to allow before terminating relay discovery
+                 to allow before terminating Relay Discovery
                  and reporting an error.";
             }
             leaf request-timeout {
               type uint32;
-              units "second";
+              units "seconds";
               description
                 "Initial time to wait for a response
                  to a Request message";
@@ -692,13 +712,13 @@ module ietf-amt {
               type uint32;
               description
                 "Maximum number of Request retransmissions
-                 to allow before abandoning a relay and restarting
-                 relay discovery or reporting an error.";
+                 to allow before abandoning a Relay and restarting
+                 Relay Discovery or reporting an error.";
             }
             leaf dest-unreach-retry-count {
               type uint32;
               description
-                "The maximum number of times a gateway should
+                "The maximum number of times a Gateway should
                  attempt to send the same Request or Membership
                  Update message after receiving an ICMP Destination
                  Unreachable message.";
@@ -715,14 +735,14 @@ module ietf-amt {
               type yang:zero-based-counter64;
               config false;
               description
-                "Number of AMT relay discovery messages sent
+                "Number of AMT Relay Discovery messages sent
                  on the interface.";
             }
             leaf relay-advertisement-message-count {
               type yang:zero-based-counter64;
               config false;
               description
-                "Number of AMT relay advertisement messages received
+                "Number of AMT Relay advertisement messages received
                  on the interface.";
             }
             leaf request-message-count {
@@ -746,6 +766,19 @@ module ietf-amt {
                 "Number of AMT membership update messages sent
                  on the interface.";
             }
+            leaf discontinuity-time {
+              type yang:date-and-time;
+              description
+                "The time on the most recent occasion at which any
+                 one or more of this interface's counters suffered
+                 a discontinuity.
+
+                 If no such discontinuities have occurred since the
+                 last re-initialization of the AMT tunnel based on
+                 this interface, then this node contains the time
+                 when the AMT tunnel was last initialized or the
+                 tunnel was established.";
+            }
           }
         }
         container gateway-message-statistics {
@@ -756,11 +789,11 @@ module ietf-amt {
             type yang:date-and-time;
             description
               "The time on the most recent occasion at which the AMT
-               gateway message counters suffered a discontinuity.
+               Gateway message counters suffered a discontinuity.
 
                If no such discontinuities have occurred since the
-               last re-initialization of the gateway, then this
-               data node contains the time when the gateway was last
+               last re-initialization of the Gateway, then this
+               data node contains the time when the Gateway was last
                initialized.";
           }
           container received {
@@ -769,7 +802,7 @@ module ietf-amt {
             leaf relay-advertisement {
               type yang:zero-based-counter64;
               description
-                "Number of AMT relay advertisement messages
+                "Number of AMT Relay advertisement messages
                  received.";
             }
             leaf membership-query {
@@ -785,7 +818,7 @@ module ietf-amt {
             leaf relay-discovery {
               type yang:zero-based-counter64;
               description
-                "Number of AMT relay discovery messages sent.";
+                "Number of AMT Relay Discovery messages sent.";
             }
             leaf request {
               type yang:zero-based-counter64;
