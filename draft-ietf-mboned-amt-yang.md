@@ -562,10 +562,10 @@ module: ietf-amt
 
    This document specifies a YANG data model for AMT that configures and monitors
    address parameters for both Relay and Gateway functions. Operators
-   MUST monitor for address family mismatches between associated address parameters
+   have to monitor for address family mismatches between associated address parameters
    to ensure correct protocol operation, tunnel establishment, and forwarding behavior.
 
-   The following address pairs and combinations are critical and MUST be validated
+   The following address pairs and combinations are critical and have to be validated
    for address family consistency:
 
    * On the AMT Relay:
@@ -576,7 +576,7 @@ module: ietf-amt
      * The 'anycast-prefix' (discovery anycast prefix)
      * The 'local-address' (unicast IP address)
 
-     These IP addresses MUST belong to the same address family indicated by the 'family'
+     These IP addresses have to belong to the same address family indicated by the 'family'
      leaf (either both IPv4 or both IPv6). A mismatch (e.g., IPv4 'anycast-prefix' paired
      with IPv6 'local-address' under the same IPv4 'family' entry) indicates a configuration
      anomaly that can prevent Relay Discovery, Advertisement responses, and tunnel setup.
@@ -589,7 +589,7 @@ module: ietf-amt
      * The 'relay-address'
      * The 'local-address' (operational state)
 
-     These IP addresses MUST all belong to the same address family. A mismatch can lead to
+     These IP addresses must all belong to the same address family. A mismatch can lead to
      failure in Relay Discovery, tunnel establishment, or traffic decapsulation.
 
    It is RECOMMENDED that operators implement automated configuration validation tools to
