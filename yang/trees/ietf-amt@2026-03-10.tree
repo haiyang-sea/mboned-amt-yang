@@ -117,7 +117,7 @@ module: ietf-amt
           |     |       yang:zero-based-counter64
           |     +--ro membership-update-message-count?
           |     |       yang:zero-based-counter64
-          |     +--rw discontinuity-time?
+          |     +--ro discontinuity-time?
           |             yang:date-and-time
           +--ro gateway-message-statistics
              +--ro discontinuity-time?   yang:date-and-time
