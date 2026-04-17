@@ -768,6 +768,7 @@ module ietf-amt {
             }
             leaf discontinuity-time {
               type yang:date-and-time;
+              config false;
               description
                 "The time on the most recent occasion at which any
                  one or more of this interface's counters suffered
